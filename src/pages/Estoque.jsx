@@ -1,6 +1,11 @@
+import "../styles/estoque.css";
+
 const Estoque = () => {
     return (
         <div>
+
+
+
 
 
 

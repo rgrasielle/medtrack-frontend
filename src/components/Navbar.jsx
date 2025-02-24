@@ -16,16 +16,14 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ShieldIcon from '@mui/icons-material/Shield';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-
 import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
 const NAVIGATION = [
     { title: "Home", path: "/", icon: <HomeIcon /> },
-    { title: "Estoque", path: "/estoque", icon: <InventoryIcon /> },
     { title: "Cadastro", path: "/cadastro", icon: <AddCircleIcon /> },
-
+    { title: "Estoque", path: "/estoque", icon: <InventoryIcon /> },
 ];
 
 const Navbar = () => {
@@ -35,7 +33,7 @@ const Navbar = () => {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" sx={{ backgroundColor: "38ff7a", color: "white", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+            <AppBar position="fixed" sx={{ backgroundColor: "#333", color: "white", zIndex: (theme) => theme.zIndex.drawer + 1 }}>
                 <Toolbar>
                     <Typography variant="h5" noWrap component="div">
                         MedTrack

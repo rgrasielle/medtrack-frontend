@@ -5,6 +5,7 @@ import Estoque from './pages/Estoque';
 import Navbar from './components/Navbar';
 import './App.css';
 
+
 function App() {
 
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/cadastro" element={<CadastroMedicamento />} />
       </Routes>
     </Router>
+
 
   )
 }
