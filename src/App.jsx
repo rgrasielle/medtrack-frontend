@@ -2,23 +2,24 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from "./pages/Home";
 import CadastroMedicamento from "./pages/CadastroMedicamento";
 import Estoque from './pages/Estoque';
-import Navbar from './components/Navbar';
+import CadastroUsuario from './pages/CadastroUsuario';
 import './App.css';
-
+import { ThemeProvider } from '@emotion/react';
+import theme from './styles/theme';
 
 function App() {
 
   return (
-
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/estoque" element={<Estoque />} />
-        <Route path="/cadastro" element={<CadastroMedicamento />} />
-      </Routes>
-    </Router>
-
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<CadastroUsuario />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/cadastro" element={<CadastroMedicamento />} />
+          <Route path="/estoque" element={<Estoque />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
 
   )
 }
