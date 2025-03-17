@@ -23,7 +23,7 @@ const Home = () => {
             >
                 <h1>MedTrack</h1>
                 <p>Gerencie seus medicamentos e suplementos de forma simples e eficiente.</p>
-                <Link to="/cadastro">
+                <Link to="/item">
                     <Button sx={{ marginTop: 4 }} >Cadastrar item</Button>
                 </Link>
             </Box >

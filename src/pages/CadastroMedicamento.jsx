@@ -1,13 +1,16 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Container, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import "../styles/cadastroMedicamento.css";
 import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
 import Navbar from "../components/Navbar";
+import { useState } from "react";
 
+const drawerWidth = 240;
 
 const CadastroMedicamento = () => {
 
-    const { control, handleSubmit, formState: { errors } } = useForm();
+    const { control, handleSubmit, formState: { errors }, reset } = useForm();
+    const [mensagemSucesso, setMensagemSucesso] = useState("");
 
     function onSubmit(data) {
         console.log(data);
@@ -15,23 +18,52 @@ const CadastroMedicamento = () => {
     }
 
     const chamarAPI = (userData) => {
-        axios.post("http://localhost:8080/products", userData).then((response) => {
-            console.log(response.status);
-            console.log("Cadastrado com sucesso")
-        });
-    }
+        const token = localStorage.getItem("user_token"); // Pegando o token salvo no login
+
+        if (!token) {
+            console.error("Erro: Token não encontrado!");
+            return;
+        }
+
+        axios.post("http://localhost:8080/products", userData, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        })
+            .then((response) => {
+                console.log("Cadastrado com sucesso", response.data);
+                setMensagemSucesso("Cadastrado realizado com sucesso!");
+                reset();
+            })
+            .catch((error) => {
+                console.error("Erro ao cadastrar:", error.response ? error.response.data : error);
+            });
+    };
 
     return (
         <>
             <Navbar />
 
-            <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "400px", marginTop: "-100px" }}>
+            <Container maxWidth="lg" sx={{
+                display: "flex",
+                flexDirection: "column",
+                marginLeft: `${drawerWidth}px`,
+                marginTop: 2,
+                width: `calc(370px - ${drawerWidth}px)`,
+            }}></Container>
+
+            <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "700px", margin: "0 auto", marginTop: "-100px" }}>
+
                 <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
                     <Typography variant="h4" sx={{ fontWeight: "bold", mb: 3 }}>
                         Cadastro
                     </Typography>
 
                 </Box>
+
+                {mensagemSucesso && <Alert severity="success">{mensagemSucesso}</Alert>}
+
                 <Controller
                     name="name"
                     control={control}
@@ -80,7 +112,7 @@ const CadastroMedicamento = () => {
                     render={({ field }) => (
                         <TextField
                             {...field}
-                            label="Quantidade"
+                            label="Quantidade total de doses"
                             type="number"
                             variant="outlined"
                             fullWidth
@@ -99,7 +131,7 @@ const CadastroMedicamento = () => {
                     render={({ field }) => (
                         <TextField
                             {...field}
-                            label="Quantidade por dia"
+                            label="Quantidade de doses por dia"
                             type="number"
                             variant="outlined"
                             fullWidth
@@ -125,6 +157,24 @@ const CadastroMedicamento = () => {
                             InputLabelProps={{ shrink: true }}
                             error={!!errors.start}
                             helperText={errors.start?.message}
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="daysBeforeNotification"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="Notificar quantos dias antes do término?"
+                            type="number"
+                            variant="outlined"
+                            fullWidth
+                            error={!!errors.daysBeforeNotification}
+                            helperText={errors.daysBeforeNotification?.message}
+
                         />
                     )}
                 />

@@ -17,18 +17,25 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import ShieldIcon from '@mui/icons-material/Shield';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useNavigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
 const drawerWidth = 240;
 
 const NAVIGATION = [
-    { title: "Home", path: "/", icon: <HomeIcon /> },
-    { title: "Cadastro", path: "/cadastro", icon: <AddCircleIcon /> },
+    { title: "Home", path: "/home", icon: <HomeIcon /> },
+    { title: "Cadastro", path: "/item", icon: <AddCircleIcon /> },
     { title: "Estoque", path: "/estoque", icon: <InventoryIcon /> },
 ];
 
 const Navbar = () => {
 
     const navigate = useNavigate();
+    const { signout } = useAuth();
+
+    const handleLogout = () => {
+        signout();  // Faz o logout do usuário
+        navigate("/login");  // Redireciona para a tela de login
+    };
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -62,21 +69,31 @@ const Navbar = () => {
                             </ListItem>
                         ))}
                     </List>
+
                     <Divider />
+
                     <List>
-                        {['Configurações', 'Segurança', 'Sair'].map((text, index) => (
-                            <ListItem key={text} disablePadding>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        {index === 0 && <SettingsIcon />} {/* Configurações */}
-                                        {index === 1 && <ShieldIcon />} {/* Segurança */}
-                                        {index === 2 && <ExitToAppIcon />} {/* Sair */}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
+                        <ListItem disablePadding>
+                            <ListItemButton onClick={() => navigate("/configuracoes")}>
+                                <ListItemIcon><SettingsIcon /></ListItemIcon>
+                                <ListItemText primary="Configurações" />
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton onClick={() => navigate("/seguranca")}>
+                                <ListItemIcon><ShieldIcon /></ListItemIcon>
+                                <ListItemText primary="Segurança" />
+                            </ListItemButton>
+                        </ListItem>
+                        <Divider />
+                        <ListItem disablePadding>
+                            <ListItemButton onClick={handleLogout}>
+                                <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+                                <ListItemText primary="Sair" />
+                            </ListItemButton>
+                        </ListItem>
                     </List>
+
                 </Box>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
