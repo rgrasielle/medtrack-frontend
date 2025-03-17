@@ -6,16 +6,26 @@ import { AuthContext } from "./AuthContext"; // Importando o contexto
 
 export const AuthProvider = ({ children }) => {
 
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+
+        // Inicializa o estado do usuário com os dados salvos no localStorage
+        const storedUser = localStorage.getItem("user_info");
+        return storedUser && storedUser !== "undefined" ? JSON.parse(storedUser) : null;
+    });
+
+    const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
 
     useEffect(() => {
         const userToken = localStorage.getItem("user_token");
-        const userInfo = localStorage.getItem("user_info");
 
-        // Verifica se o item existe antes de tentar fazer o parse
-        if (userToken && userInfo && userInfo !== "undefined") {
-            setUser(JSON.parse(userInfo)); // Só faz o parse se o valor for válido
+        if (userToken && !user) {
+            const userInfo = localStorage.getItem("user_info");
+            if (userInfo && userInfo !== "undefined") {
+                setUser(JSON.parse(userInfo));
+            }
         }
+
+        setLoading(false); // Finaliza o carregamento
     }, []);
 
     const signin = async (email, password) => {
@@ -31,16 +41,13 @@ export const AuthProvider = ({ children }) => {
             // Salvar o token no localStorage
             localStorage.setItem("user_token", token);
 
-            // Buscar as informações do usuário (agora com o token no header)
+            // Buscar as informações do usuário
             const userResponse = await api.get("/users/me", {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Adiciona o token no cabeçalho
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
 
             if (userResponse.data) {
                 const user = userResponse.data;
-                // Salvar as informações do usuário no localStorage
                 localStorage.setItem("user_info", JSON.stringify(user));
                 setUser(user);
 
@@ -71,8 +78,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, signed: !!user, signin, signup, signout }}>
-            {children}
+        <AuthContext.Provider value={{ user, signed: !!user, signin, signup, signout, loading }}>
+            {!loading && children}
         </AuthContext.Provider>
     );
 };

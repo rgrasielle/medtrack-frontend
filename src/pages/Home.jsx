@@ -21,7 +21,7 @@ const Home = () => {
                     width: `calc(100% - ${drawerWidth}px)`, // Ocupar apenas a área sem drawer
                 }}
             >
-                <h1>MedTrack</h1>
+                <h1 style={{ marginBottom: "4%" }}>MedTrack</h1>
                 <p>Gerencie seus medicamentos e suplementos de forma simples e eficiente.</p>
                 <Link to="/item">
                     <Button sx={{ marginTop: 4 }} >Cadastrar item</Button>

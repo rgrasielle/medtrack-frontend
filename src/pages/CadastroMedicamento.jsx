@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Container, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import "../styles/cadastroMedicamento.css";
 import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
@@ -8,7 +8,6 @@ import { useState } from "react";
 const drawerWidth = 240;
 
 const CadastroMedicamento = () => {
-
     const { control, handleSubmit, formState: { errors }, reset } = useForm();
     const [mensagemSucesso, setMensagemSucesso] = useState("");
 
@@ -18,7 +17,7 @@ const CadastroMedicamento = () => {
     }
 
     const chamarAPI = (userData) => {
-        const token = localStorage.getItem("user_token"); // Pegando o token salvo no login
+        const token = localStorage.getItem("user_token");
 
         if (!token) {
             console.error("Erro: Token não encontrado!");
@@ -33,7 +32,7 @@ const CadastroMedicamento = () => {
         })
             .then((response) => {
                 console.log("Cadastrado com sucesso", response.data);
-                setMensagemSucesso("Cadastrado realizado com sucesso!");
+                setMensagemComTimeout(setMensagemSucesso, "Cadastro realizado com sucesso!");
                 reset();
             })
             .catch((error) => {
@@ -41,152 +40,165 @@ const CadastroMedicamento = () => {
             });
     };
 
+    const setMensagemComTimeout = (setMensagem, mensagem) => {
+        setMensagem(mensagem);
+        setTimeout(() => {
+            setMensagem("");
+        }, 5000);
+    };
+
     return (
         <>
             <Navbar />
 
-            <Container maxWidth="lg" sx={{
-                display: "flex",
-                flexDirection: "column",
-                marginLeft: `${drawerWidth}px`,
-                marginTop: 2,
-                width: `calc(370px - ${drawerWidth}px)`,
-            }}></Container>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    position: "absolute",
+                    top: 0,
+                    left: drawerWidth,
+                    width: `calc(95% - ${drawerWidth}px)`,
+                    height: "100vh", // Ocupa toda a altura da tela
+                    overflow: "auto", // Evita qualquer rolagem
+                }}
+            >
 
-            <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "10px", maxWidth: "700px", margin: "0 auto", marginTop: "-100px" }}>
+                <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2, mt: 4 }}>
+                    Cadastrar item
+                </Typography>
 
-                <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-                    <Typography variant="h4" sx={{ fontWeight: "bold", mb: 3 }}>
-                        Cadastro
-                    </Typography>
+                {mensagemSucesso && <Alert severity="success" sx={{ mb: 2 }}>{mensagemSucesso}</Alert>}
 
-                </Box>
+                <form onSubmit={handleSubmit(onSubmit)}
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "10px",
+                        maxWidth: "370px", // Mantém um tamanho fixo para não esticar demais
+                        width: "100%",
+                        marginTop: 2
+                    }}>
 
-                {mensagemSucesso && <Alert severity="success">{mensagemSucesso}</Alert>}
-
-                <Controller
-                    name="name"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: 'O nome é obrigatório' }}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Nome"
-                            type="text"
-                            variant="outlined"
-                            fullWidth
-                            error={!!errors.name}
-                            helperText={errors.name?.message}
-
-                        />
-                    )}
-                />
-
-                <Controller
-                    name="category"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: 'A categoria é obrigatória' }}
-                    render={({ field }) => (
-                        <FormControl fullWidth error={!!errors.categoria}>
-                            <InputLabel id="categoria-label">Categoria</InputLabel>
-                            <Select
+                    <Controller
+                        name="name"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'O nome é obrigatório' }}
+                        render={({ field }) => (
+                            <TextField
                                 {...field}
-                                labelId="categoria-label"
-                                label="Categoria"
-                            >
-                                <MenuItem value="MEDICAMENTO">Medicamento</MenuItem>
-                                <MenuItem value="SUPLEMENTO">Suplemento</MenuItem>
-                            </Select>
-                            {errors.categoria && <p>{errors.category.message}</p>}
-                        </FormControl>
-                    )}
-                />
+                                label="Nome"
+                                type="text"
+                                variant="outlined"
+                                fullWidth
+                                error={!!errors.name}
+                                helperText={errors.name?.message}
+                            />
+                        )}
+                    />
 
-                <Controller
-                    name="total"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: 'A quantidade é obrigatória', min: { value: 1, message: 'Deve ser maior que zero' } }}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Quantidade total de doses"
-                            type="number"
-                            variant="outlined"
-                            fullWidth
-                            error={!!errors.total}
-                            helperText={errors.total?.message}
+                    <Controller
+                        name="category"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'A categoria é obrigatória' }}
+                        render={({ field }) => (
+                            <FormControl fullWidth error={!!errors.category}>
+                                <InputLabel id="categoria-label">Categoria</InputLabel>
+                                <Select {...field} labelId="categoria-label" label="Categoria">
+                                    <MenuItem value="MEDICAMENTO">Medicamento</MenuItem>
+                                    <MenuItem value="SUPLEMENTO">Suplemento</MenuItem>
+                                </Select>
+                                <FormHelperText>{errors.category?.message}</FormHelperText>
 
-                        />
-                    )}
-                />
+                            </FormControl>
+                        )}
+                    />
 
-                <Controller
-                    name="quantityPerDay"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: 'A quantidade por dia é obrigatória', min: { value: 1, message: 'Deve ser maior que zero' } }}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Quantidade de doses por dia"
-                            type="number"
-                            variant="outlined"
-                            fullWidth
-                            error={!!errors.quantityPerDay}
-                            helperText={errors.quantityPerDay?.message}
+                    <Controller
+                        name="total"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'A quantidade é obrigatória', min: { value: 1, message: 'Deve ser maior que zero' } }}
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                label="Quantidade total de doses"
+                                type="number"
+                                variant="outlined"
+                                fullWidth
+                                error={!!errors.total}
+                                helperText={errors.total?.message}
+                            />
+                        )}
+                    />
 
-                        />
-                    )}
-                />
+                    <Controller
+                        name="quantityPerDay"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'A quantidade por dia é obrigatória', min: { value: 1, message: 'Deve ser maior que zero' } }}
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                label="Quantidade de doses por dia"
+                                type="number"
+                                variant="outlined"
+                                fullWidth
+                                error={!!errors.quantityPerDay}
+                                helperText={errors.quantityPerDay?.message}
+                            />
+                        )}
+                    />
 
-                <Controller
-                    name="start"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: 'A data de início é obrigatória' }}
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Data de início"
-                            type="date"
-                            variant="outlined"
-                            fullWidth
-                            InputLabelProps={{ shrink: true }}
-                            error={!!errors.start}
-                            helperText={errors.start?.message}
-                        />
-                    )}
-                />
+                    <Controller
+                        name="start"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'A data de início é obrigatória' }}
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                label="Data de início"
+                                type="date"
+                                variant="outlined"
+                                fullWidth
+                                InputLabelProps={{ shrink: true }}
+                                error={!!errors.start}
+                                helperText={errors.start?.message}
+                            />
+                        )}
+                    />
 
-                <Controller
-                    name="daysBeforeNotification"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Notificar quantos dias antes do término?"
-                            type="number"
-                            variant="outlined"
-                            fullWidth
-                            error={!!errors.daysBeforeNotification}
-                            helperText={errors.daysBeforeNotification?.message}
+                    <Controller
+                        name="daysBeforeNotification"
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                            <TextField
+                                {...field}
+                                label="Notificar quantos dias antes do término?"
+                                type="number"
+                                variant="outlined"
+                                fullWidth
+                                error={!!errors.daysBeforeNotification}
+                                helperText={errors.daysBeforeNotification?.message}
+                            />
+                        )}
+                    />
 
-                        />
-                    )}
-                />
+                    <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
+                        Salvar
+                    </Button>
 
-                <Button
-                    type="submit"
-                    fullWidth
-                    sx={{ marginTop: 2 }} >Salvar</Button>
-            </form>
+                </form>
+            </Box>
         </>
-    )
-}
+    );
+};
 
-export default CadastroMedicamento
-
+export default CadastroMedicamento;

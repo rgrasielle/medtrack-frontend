@@ -13,10 +13,15 @@ import useAuth from './hooks/useAuth';
 
 // Para proteger as rotas privadas
 const Private = ({ Item }) => {
-  const { signed } = useAuth();
+  const { signed, loading } = useAuth();
+
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
 
   return signed ? <Item /> : <Navigate to="/login" />;
 };
+
 
 Private.propTypes = {
   Item: PropTypes.elementType.isRequired, // Garante que `Item` seja um componente React válido
