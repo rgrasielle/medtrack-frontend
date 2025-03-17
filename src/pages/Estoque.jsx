@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "../styles/estoque.css";
-import { Alert, Box, Button, Card, CardActionArea, CardActions, CardContent, Container, Grid2, Typography } from "@mui/material";
+import { Alert, Box, Button, Card, CardActionArea, CardActions, CardContent, Container, FormControl, Grid2, InputLabel, MenuItem, Select, Typography } from "@mui/material";
 import Navbar from "../components/Navbar";
 import EditItemModal from "../components/EditItemModal";
 import { format, parseISO, addHours } from "date-fns";
@@ -14,6 +14,9 @@ const Estoque = () => {
     const [mensagemSucesso, setMensagemSucesso] = useState("");
     const [openEditModal, setOpenEditModal] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const [categoryFilter, setCategoryFilter] = useState("");
+    const [dateSort, setDateSort] = useState(""); // "recent", "oldest", "nearest", "farthest"
 
     const getProducts = async () => {
         try {
@@ -117,6 +120,18 @@ const Estoque = () => {
         return format(dateAdjusted, "dd/MM/yyyy");
     };
 
+    const filteredProducts = products
+        .filter((product) =>
+            categoryFilter ? product.category === categoryFilter : true
+        )
+        .sort((a, b) => {
+            if (dateSort === "recent") return new Date(b.start) - new Date(a.start);
+            if (dateSort === "oldest") return new Date(a.start) - new Date(b.start);
+            if (dateSort === "nearest") return a.daysRemaining - b.daysRemaining;
+            if (dateSort === "farthest") return b.daysRemaining - a.daysRemaining;
+            return 0;
+        });
+
     return (
         <>
             <Navbar />
@@ -148,11 +163,52 @@ const Estoque = () => {
 
                 </Box>
 
+                {/* Filtros de Categoria e Ordenação */}
+                <Box sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: 2,
+                    mb: 2,
+                    mt: 3,
+                    width: "100%",
+                    paddingRight: 4
+                }}>
+                    <FormControl sx={{ minWidth: 150 }} size="small">
+                        <InputLabel id="categoria-label">Filtrar por categoria</InputLabel>
+                        <Select
+                            labelId="categoria-label"
+                            value={categoryFilter}
+                            onChange={(e) => setCategoryFilter(e.target.value)}
+                            label="Filtrar por categoria"
+                        >
+                            <MenuItem value="">Todas</MenuItem>
+                            <MenuItem value="MEDICAMENTO">Medicamento</MenuItem>
+                            <MenuItem value="SUPLEMENTO">Suplemento</MenuItem>
+                        </Select>
+                    </FormControl>
 
 
+                    <FormControl sx={{ minWidth: 200 }} size="small">
+                        <InputLabel id="ordenar-label">Ordenar por</InputLabel>
+                        <Select
+                            labelId="ordenar-label"
+                            value={dateSort}
+                            onChange={(e) => setDateSort(e.target.value)}
+                            label="Ordenar por"
+                        >
+                            <MenuItem value="">Sem ordenação</MenuItem>
+                            <MenuItem value="recent">Data de início (mais recente)</MenuItem>
+                            <MenuItem value="oldest">Data de início (mais antiga)</MenuItem>
+                            <MenuItem value="nearest">Data de término (mais próxima)</MenuItem>
+                            <MenuItem value="farthest">Data de término (mais distante)</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
+
+                {/* Exibição dos Produtos */}
                 <Box sx={{ width: "100%", display: "flex", justifyContent: "center", mt: 2 }}>
                     <Grid2 container spacing={2} justifyContent="flex-start" sx={{ pl: 10 }}>
-                        {products.map((item) => (
+                        {filteredProducts.map((item) => (
                             <Grid2 item xs={12} sm={6} md={4} key={item.id}>
                                 <Card sx={{ width: "100%", maxWidth: 350, p: 2, mb: 2, height: "100%" }}>
                                     <CardActionArea>
