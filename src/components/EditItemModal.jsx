@@ -23,6 +23,7 @@ const EditItemModal = ({ open, handleClose, product, handleChange, handleSubmit 
                         name="category"
                         value={product.category || ""}
                         onChange={handleChange}
+                        label="Categoria"
                     >
                         <MenuItem value="MEDICAMENTO">Medicamento</MenuItem>
                         <MenuItem value="SUPLEMENTO">Suplemento</MenuItem>
