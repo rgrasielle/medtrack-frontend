@@ -1,11 +1,8 @@
 import axios from "axios";
 
-// Programa as requisições a sistemas externos a aplicação
-
-
-// Configuração da URL base para o backend
+// Obtém a URL da API a partir da variável de ambiente
 const api = axios.create({
-    baseURL: 'http://localhost:8080/', // URL do seu backend
+    baseURL: import.meta.env.VITE_API_URL, // Usa a URL definida nas variáveis de ambiente
 });
 
-export default api
+export default api;

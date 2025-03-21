@@ -24,7 +24,10 @@ const CadastroMedicamento = () => {
             return;
         }
 
-        axios.post("http://localhost:8080/products", userData, {
+        // Usando a variável de ambiente VITE_API_URL
+        const apiUrl = `${import.meta.env.VITE_API_URL}/products`;
+
+        axios.post(apiUrl, userData, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"

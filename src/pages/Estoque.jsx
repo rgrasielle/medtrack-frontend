@@ -18,10 +18,12 @@ const Estoque = () => {
     const [categoryFilter, setCategoryFilter] = useState("");
     const [dateSort, setDateSort] = useState(""); // "recent", "oldest", "nearest", "farthest"
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     const getProducts = async () => {
         try {
             const token = localStorage.getItem("user_token");
-            const response = await axios.get("http://localhost:8080/products", {
+            const response = await axios.get(`${apiUrl}/products`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -35,7 +37,7 @@ const Estoque = () => {
     const deleteProduct = async (id) => {
         try {
             const token = localStorage.getItem("user_token");
-            await axios.delete(`http://localhost:8080/products/${id}`, {
+            await axios.delete(`${apiUrl}/products/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }
@@ -50,7 +52,7 @@ const Estoque = () => {
     const updateProduct = async (id, updatedData) => {
         try {
             const token = localStorage.getItem("user_token");
-            await axios.put(`http://localhost:8080/products/${id}`, updatedData, {
+            await axios.put(`${apiUrl}/products/${id}`, updatedData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",

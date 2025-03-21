@@ -26,9 +26,11 @@ const CadastroUsuario = () => {
         }
     };
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     const verificarEmailExistente = async (email) => {
         try {
-            const response = await axios.get(`http://localhost:8080/users/email-exists?email=${email}`);
+            const response = await axios.get(`${apiUrl}/users/email-exists?email=${email}`);
             return response.data.exists; // Retorna se o email existe ou não
         } catch (error) {
             console.error("Erro ao verificar email", error);
